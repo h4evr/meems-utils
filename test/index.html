@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="UTF-8" />
+    <head>
+        <title>Meems Utils</title>
+    </head>
+    <body>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.4/require.min.js"></script>
+        <script>
+            require(["../meems-utils"], function (Utils) {                
+                function BaseClass(name) {
+                    this.name = name;
+                }
+                
+                BaseClass.prototype = {
+                    sayHello: function () {
+                        console.log("Hello, my name is " + this.name);
+                    },
+                    
+                    sayGoodbye: function () {
+                        console.log("Goodbye!");
+                    }
+                };
+                
+                function BaseClass2() {
+                    BaseClass.apply(this, arguments);
+                }
+                
+                BaseClass2.extend(BaseClass, {
+                    sayGoodbye: function() {
+                        console.log("Nooo!! I want you to scratch my belly!");
+                    }
+                });
+                
+                var luna = new BaseClass("Luna");
+                var meems = new BaseClass2("Meems");
+                
+                luna.sayHello();
+                luna.sayGoodbye();
+                
+                meems.sayHello();
+                meems.sayGoodbye();
+                
+                console.log(luna instanceof BaseClass);
+                console.log(meems instanceof BaseClass);
+                console.log(luna instanceof BaseClass2);
+                console.log(meems instanceof BaseClass2);
+            });
+        </script>
+    </body>
+</html>
