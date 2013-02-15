@@ -33,11 +33,11 @@ define(function() {
         
         Dom : {
             addClass : function (el, clazz) {
-                el.className = el.className.replace(clazz, "") + " " + clazz;
+                el.className = el.className.replace(new RegExp("\\b" + clazz + "\\b"), "") + " " + clazz;
             },
             
             removeClass : function (el, clazz) {
-                el.className = el.className.replace(" " + clazz, "");
+                el.className = el.className.replace(new RegExp("\\b" + clazz + "\\b"), "");
             }
         }
     };
