@@ -15,12 +15,38 @@ define(function() {
                     newClass[k] = newMethods[k];
                 }
             }
+        },
+        
+        Map : {
+            getKeys : function (map) {
+                var keys = [];
+                
+                for (var k in map) {
+                    if (map.hasOwnProperty(k)) {
+                        keys.push(k);
+                    }
+                }
+                
+                return keys;
+            }
+        },
+        
+        Dom : {
+            addClass : function (el, clazz) {
+                el.className = el.className.replace(clazz, "") + " " + clazz;
+            },
+            
+            removeClass : function (el, clazz) {
+                el.className = el.className.replace(" " + clazz, "");
+            }
         }
     };
     
-    Function.prototype.extend = function(baseClass, newMethods) {
-        Utils.extend(this, baseClass, newMethods);
-    };
+    if (Function.prototype.extend === undefined) {
+        Function.prototype.extend = function(baseClass, newMethods) {
+            Utils.extend(this, baseClass, newMethods);
+        };
+    }
     
     return Utils;
 });
