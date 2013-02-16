@@ -1,4 +1,6 @@
-define(function() {    
+define(function() {
+    var head = (document.head || document.getElementsByTagName('head')[0]);
+    
     var Utils = {
         /**
          * Used for extending classes.
@@ -44,7 +46,7 @@ define(function() {
                 var meta = document.createElement("meta");
                 meta.setAttribute("name", "viewport");
                 meta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1");
-                document.head.appendChild(meta);
+                head.appendChild(meta);
             }
         }
     };
