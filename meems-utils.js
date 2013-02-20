@@ -48,6 +48,10 @@ define(function() {
                 meta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1");
                 head.appendChild(meta);
             }
+        },
+        
+        postPone : function (fn) {
+            setTimeout(fn, 0);
         }
     };
     
