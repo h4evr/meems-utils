@@ -51,7 +51,13 @@ define(function() {
         },
         
         postPone : function (fn) {
-            setTimeout(fn, 0);
+            setTimeout(fn, 10);
+        },
+        
+        bind : function (fn, self) {
+            return function () {
+                fn.apply(self, arguments);
+            };
         }
     };
     
