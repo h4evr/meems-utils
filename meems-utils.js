@@ -1,5 +1,6 @@
 define(function() {
     var head = (document.head || document.getElementsByTagName('head')[0]);
+    var supportsTouch = 'ontouchstart' in window;
     
     var Utils = {
         /**
@@ -47,6 +48,10 @@ define(function() {
                 meta.setAttribute("name", "viewport");
                 meta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1");
                 head.appendChild(meta);
+            },
+            
+            supportsTouch : function () {
+                return supportsTouch;
             }
         },
         
@@ -58,6 +63,16 @@ define(function() {
             return function () {
                 fn.apply(self, arguments);
             };
+        },
+        
+        indexOfByProp : function (arr, prop, value) {
+            for (var i = 0; i < arr.length; ++i) {
+                if (arr[i][prop] === value) {
+                    return i;
+                }
+            }
+            
+            return -1;
         }
     };
     
