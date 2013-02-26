@@ -1,6 +1,10 @@
 define(function() {
-    var head = (document.head || document.getElementsByTagName('head')[0]);
-    var supportsTouch = 'ontouchstart' in window;
+    var head = (document.head || document.getElementsByTagName('head')[0]),
+        supportsTouch = 'ontouchstart' in window,
+        pendingDomClassNameChanges = {},
+        pendingHtmlMods = {},
+        elmId = 0,
+        elementsById = {};
     
     var Utils = {
         /**
@@ -35,12 +39,42 @@ define(function() {
         },
         
         Dom : {
+            getClass : function (el) {
+                if (!el._meems_uid) {
+                    el._meems_uid = ++elmId;
+                    elementsById[el._meems_uid] = el;
+                    pendingDomClassNameChanges[el._meems_uid] = el.className;
+                } else if (!(el._meems_uid in pendingDomClassNameChanges) || !pendingDomClassNameChanges[el._meems_uid]) {
+                    pendingDomClassNameChanges[el._meems_uid] = el.className;
+                }
+                
+                return pendingDomClassNameChanges[el._meems_uid];
+            },
+            
             addClass : function (el, clazz) {
-                el.className = el.className.replace(new RegExp("\\b" + clazz + "\\b"), "") + " " + clazz;
+                var currentClass = this.getClass(el);
+                pendingDomClassNameChanges[el._meems_uid] = currentClass.replace(new RegExp("\\b" + clazz + "\\b"), "") + " " + clazz;
             },
             
             removeClass : function (el, clazz) {
-                el.className = el.className.replace(new RegExp("\\b" + clazz + "\\b"), "");
+                var currentClass = this.getClass(el);
+                pendingDomClassNameChanges[el._meems_uid] = currentClass.replace(new RegExp("\\b" + clazz + "\\b"), "");
+            },
+            
+            setClass : function (el, clazz)  {
+                if (!el._meems_uid) {
+                    el._meems_uid = ++elmId;
+                    elementsById[el._meems_uid] = el;
+                }
+                pendingDomClassNameChanges[el._meems_uid] = clazz;
+            },
+            
+            setHtml : function (el, html) {
+                if (!el._meems_uid) {
+                    el._meems_uid = ++elmId;
+                    elementsById[el._meems_uid] = el;
+                }
+                pendingHtmlMods[el._meems_uid] = html;
             },
             
             fixedViewport : function () {
@@ -52,6 +86,32 @@ define(function() {
             
             supportsTouch : function () {
                 return supportsTouch;
+            },
+            
+            applyChanges : function () {
+                var newClassName, newHtml, uid;
+                
+                for (uid in pendingDomClassNameChanges) {
+                    if (pendingDomClassNameChanges.hasOwnProperty(uid)) {
+                        newClassName = pendingDomClassNameChanges[uid];
+                        if (newClassName) {
+                            elementsById[uid].className = newClassName;
+                        }
+                    }
+                }
+                
+                for (uid in pendingHtmlMods) {
+                    if (pendingHtmlMods.hasOwnProperty(uid)) {
+                        newHtml = pendingHtmlMods[uid];
+                        if (newHtml) {
+                            elementsById[uid].innerHTML = newHtml;
+                        }
+                    }
+                }
+                
+                pendingDomClassNameChanges = {};
+                pendingHtmlMods = {};
+                
             }
         },
         
