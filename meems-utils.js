@@ -1,4 +1,7 @@
-define(function() {
+/*global define*/
+define(function () {
+    "use strict";
+
     var head = (document.head || document.getElementsByTagName('head')[0]),
         supportsTouch = 'ontouchstart' in window,
         pendingDomClassNameChanges = {},
@@ -10,9 +13,9 @@ define(function() {
         /**
          * Used for extending classes.
          */
-        extend : function (newClass, classToExtend, newMethods) {
+        extend : function (newClass, ClassToExtend, newMethods) {
             if (typeof newClass === 'function') {
-                newClass.prototype = new classToExtend();
+                newClass.prototype = new ClassToExtend();
                 newClass.constructor = newClass;
                 newClass = newClass.prototype;
             }
@@ -40,41 +43,41 @@ define(function() {
         
         Dom : {
             getClass : function (el) {
-                if (!el._meems_uid) {
-                    el._meems_uid = ++elmId;
-                    elementsById[el._meems_uid] = el;
-                    pendingDomClassNameChanges[el._meems_uid] = el.className;
-                } else if (!(el._meems_uid in pendingDomClassNameChanges) || !pendingDomClassNameChanges[el._meems_uid]) {
-                    pendingDomClassNameChanges[el._meems_uid] = el.className;
+                if (!el.$meems_uid) {
+                    el.$meems_uid = ++elmId;
+                    elementsById[el.$meems_uid] = el;
+                    pendingDomClassNameChanges[el.$meems_uid] = el.className;
+                } else if (!(el.$meems_uid in pendingDomClassNameChanges) || !pendingDomClassNameChanges[el.$meems_uid]) {
+                    pendingDomClassNameChanges[el.$meems_uid] = el.className;
                 }
                 
-                return pendingDomClassNameChanges[el._meems_uid];
+                return pendingDomClassNameChanges[el.$meems_uid];
             },
             
             addClass : function (el, clazz) {
                 var currentClass = this.getClass(el);
-                pendingDomClassNameChanges[el._meems_uid] = currentClass.replace(new RegExp("\\b" + clazz + "\\b"), "") + " " + clazz;
+                pendingDomClassNameChanges[el.$meems_uid] = currentClass.replace(new RegExp("\\b" + clazz + "\\b"), "") + " " + clazz;
             },
             
             removeClass : function (el, clazz) {
                 var currentClass = this.getClass(el);
-                pendingDomClassNameChanges[el._meems_uid] = currentClass.replace(new RegExp("\\b" + clazz + "\\b"), "");
+                pendingDomClassNameChanges[el.$meems_uid] = currentClass.replace(new RegExp("\\b" + clazz + "\\b"), "");
             },
             
             setClass : function (el, clazz)  {
-                if (!el._meems_uid) {
-                    el._meems_uid = ++elmId;
-                    elementsById[el._meems_uid] = el;
+                if (!el.$meems_uid) {
+                    el.$meems_uid = ++elmId;
+                    elementsById[el.$meems_uid] = el;
                 }
-                pendingDomClassNameChanges[el._meems_uid] = clazz;
+                pendingDomClassNameChanges[el.$meems_uid] = clazz;
             },
             
             setHtml : function (el, html) {
-                if (!el._meems_uid) {
-                    el._meems_uid = ++elmId;
-                    elementsById[el._meems_uid] = el;
+                if (!el.$meems_uid) {
+                    el.$meems_uid = ++elmId;
+                    elementsById[el.$meems_uid] = el;
                 }
-                pendingHtmlMods[el._meems_uid] = html;
+                pendingHtmlMods[el.$meems_uid] = html;
             },
             
             fixedViewport : function () {
@@ -149,7 +152,7 @@ define(function() {
     };
     
     if (Function.prototype.extend === undefined) {
-        Function.prototype.extend = function(baseClass, newMethods) {
+        Function.prototype.extend = function (baseClass, newMethods) {
             Utils.extend(this, baseClass, newMethods);
         };
     }
