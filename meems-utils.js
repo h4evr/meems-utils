@@ -125,6 +125,18 @@ define(function() {
             };
         },
         
+        throttle : function (fn, ms) {
+            var lastCall, now;
+            return function () {
+                now = (new Date()).getTime();
+                if (!lastCall || now - lastCall > ms) {
+                    var ret = fn.apply(this, arguments);
+                    lastCall = now;
+                    return ret;
+                }
+            };
+        },
+        
         indexOfByProp : function (arr, prop, value) {
             for (var i = 0; i < arr.length; ++i) {
                 if (arr[i][prop] === value) {
