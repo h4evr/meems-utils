@@ -116,6 +116,23 @@ define(function () {
                 }
 
                 return -1;
+            },
+
+            /**
+             * Removes an element from an array (in-place).
+             *
+             * @method remove
+             * @static
+             * @param {Array} arr The array to remove the element from.
+             * @param {mixed} el The element to remove.
+             */
+            remove : function (arr, el) {
+                for (var i = 0, ln = arr.length; i < ln; ++i) {
+                    if (arr[i] === el) {
+                        arr.splice(i, 0);
+                        return;
+                    }
+                }
             }
         },
 
@@ -288,6 +305,31 @@ define(function () {
              */
             supportsTouch : function () {
                 return supportsTouch;
+            },
+
+            /**
+             * Retrieves the absolute x and y components of the provided element,
+             * relative to its closest parent with position absolute.
+             *
+             * @method getAbsolutePosition
+             * @param {HTMLElement} el The element to calculate the position of.
+             * @return {Object} x and y
+             */
+            getAbsolutePosition : function (el) {
+                var currentEl = el,
+                    ret = {
+                        x: 0,
+                        y: 0
+                    };
+
+                while (currentEl && currentEl.style.position !== 'absolute') {
+                    ret.x += currentEl.offsetLeft;
+                    ret.y += currentEl.offsetTop;
+                    currentEl = currentEl.offsetParent;
+                    break;
+                }
+
+                return ret;
             }
         }
     };
