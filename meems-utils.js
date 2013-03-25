@@ -133,6 +133,42 @@ define(function () {
                         return;
                     }
                 }
+            },
+
+            /**
+             * Move an element of the array to another position.
+             * Stolen from: http://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
+             *
+             * @method moveElement
+             * @param {Array} arr The array to modify.
+             * @param {Number} pos1 The position where the element is at.
+             * @param {Number} pos2 The position where the element must be moved to.
+             */
+            moveElement : function(arr, pos1, pos2) {
+                // local variables
+                var i, tmp;
+                // cast input parameters to integers
+                pos1 = parseInt(pos1, 10);
+                pos2 = parseInt(pos2, 10);
+                // if positions are different and inside array
+                if (pos1 !== pos2 && 0 <= pos1 && pos1 <= arr.length && 0 <= pos2 && pos2 <= arr.length) {
+                    // save element from position 1
+                    tmp = arr[pos1];
+                    // move element down and shift other elements up
+                    if (pos1 < pos2) {
+                        for (i = pos1; i < pos2; i++) {
+                            arr[i] = arr[i + 1];
+                        }
+                    }
+                    // move element up and shift other elements down
+                    else {
+                        for (i = pos1; i > pos2; i--) {
+                            arr[i] = arr[i - 1];
+                        }
+                    }
+                    // put element from position 1 to destination
+                    arr[pos2] = tmp;
+                }
             }
         },
 
@@ -330,6 +366,21 @@ define(function () {
                 }
 
                 return ret;
+            },
+
+            /**
+             * Retrieves the dimensions of an element, excluding padding, margins and borders.
+             *
+             * @method getDimensions
+             * @param {HTMLElement} el The element to calculate the dimensions of.
+             * @return {Object} width and height
+             */
+            getDimensions : function (el) {
+                var style = window.getComputedStyle(el, null);
+                return {
+                    width: parseFloat(style.getPropertyValue("width")),
+                    height: parseFloat(style.getPropertyValue("height"))
+                }
             }
         }
     };
