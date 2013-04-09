@@ -347,6 +347,29 @@ define(function () {
              * Retrieves the absolute x and y components of the provided element,
              * relative to its closest parent with position absolute.
              *
+             * @method getPosition
+             * @param {HTMLElement} el The element to calculate the position of.
+             * @return {Object} x and y
+             */
+            getPosition : function (el) {
+                var currentEl = el,
+                    ret = {
+                        x: 0,
+                        y: 0
+                    };
+
+                do {
+                    ret.x += currentEl.offsetLeft;
+                    ret.y += currentEl.offsetTop;
+                } while (currentEl = currentEl.offsetParent);
+
+                return ret;
+            },
+
+            /**
+             * Retrieves the absolute x and y components of the provided element,
+             * relative to its closest parent with position absolute.
+             *
              * @method getAbsolutePosition
              * @param {HTMLElement} el The element to calculate the position of.
              * @return {Object} x and y
