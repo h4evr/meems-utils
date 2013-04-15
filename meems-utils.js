@@ -13,7 +13,155 @@ define(function () {
         elmId = 0,
         elementsById = {};
 
+    var getXmlHttpRequest = function () {
+        if (typeof XMLHttpRequest !== 'undefined') {
+            return new XMLHttpRequest();
+        } else {
+            var versions = [
+                "MSXML2.XmlHttp.5.0",
+                "MSXML2.XmlHttp.4.0",
+                "MSXML2.XmlHttp.3.0",
+                "MSXML2.XmlHttp.2.0",
+                "Microsoft.XmlHttp"
+            ];
+
+            var xhr;
+            for(var i = 0, len = versions.length; i < len; ++i) {
+                try {
+                    xhr = new ActiveXObject(versions[i]);
+                    return xhr;
+                } catch (e) { }
+            }
+        }
+    };
+
+    /**
+     * Encodes parameters to URI format.
+     *
+     * @private
+     * @method serializeUrlObj
+     * @param obj The object to convert.
+     * @param [prefix] A prefix to apply.
+     * @return {string} The serialize object.
+     */
+    var serializeUrlObj = function(obj, prefix) {
+        var str = [];
+
+        for (var p in obj) {
+            var k = prefix ? prefix + "[" + p + "]" : p,
+                v = obj[p];
+            str.push(typeof(v) === "object" ?
+                serializeUrlObj(v, k) :
+                encodeURIComponent(k) + "=" + encodeURIComponent(v));
+        }
+
+        return str.join("&");
+    }
+
+    function buildPayload(output, params) {
+        if (output === 'json') {
+            return JSON.stringify(params);
+        } else if (output === 'url') {
+            return serializeUrlObj(params);
+        }
+    }
+
+    function decodeResponse(method, text) {
+        if (method === 'text') {
+            return text;
+        } else if (method === 'json') {
+            return JSON.parse(text);
+        } else if (method === 'xml') {
+            var parser = new DOMParser();
+            return parser.parseFromString(text, "application/xml");
+        }
+    }
+
     var Utils = {
+        /**
+         * Methods related with AJAX.
+         *
+         * @class Ajax
+         */
+        Ajax : {
+            /**
+             * Make an AJAX request.
+             *
+             * @method request
+             * @param options The necessary data for making the request.
+             * @param options.url The URL to send the request to.
+             * @param [options.params] The parameters that must be sent.
+             * @param [options.method=GET] Which method to use (GET, POST, PUT, DELETE)
+             * @param [options.format=url] In which format to encode the parameters (url, json).
+             * @param [options.decoding=text] How the response should be decoded (text, json, xml).
+             * @param [options.headers] Custom headers to send in the request.
+             * @param options.done Called when the response arrives.
+             * @param options.done.statusCode The status code of the response.
+             * @param [options.done.response] The textual content of the response.
+             */
+            request : function (options) {
+                var xhr = getXmlHttpRequest();
+
+                xhr.onreadystatechange = function () {
+                    if(xhr.readyState < 4) {
+                        return;
+                    }
+
+                    if(xhr.status !== 200) {
+                        options.done({
+                            statusCode: xhr.status
+                        });
+                        return;
+                    }
+
+                    // all is well
+                    if(xhr.readyState === 4) {
+                        var decoding = options.decoding || 'text';
+
+                        options.done({
+                            statusCode: xhr.status,
+                            response: decodeResponse(decoding, xhr.responseText)
+                        });
+                    }
+                };
+
+                var url = options.url,
+                    headers = options.headers || {},
+                    method = options.method || 'GET',
+                    format = options.format || 'url';
+
+                if (method === 'GET') {
+                    xhr.open(method, url + "?" + buildPayload('url', options.params), true);
+                } else {
+                    xhr.open(method, url, true);
+                }
+
+                if ("withCredentials" in xhr) {
+                    xhr.withCredentials = true;
+                }
+
+                if (format === 'url') {
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                } else if (format === 'json') {
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                } else if (format === 'xml') {
+                    xhr.setRequestHeader("Content-Type", "application/xml");
+                }
+
+                for (var k in headers) {
+                    if (headers.hasOwnProperty(k)) {
+                        xhr.setRequestHeader(k, headers[k]);
+                    }
+                }
+
+                if (method === 'GET') {
+                    xhr.send();
+                } else {
+                    xhr.send(buildPayload(format, options.params));
+                }
+            }
+        },
+
         /**
          * Methods related with function manipulation.
          *
