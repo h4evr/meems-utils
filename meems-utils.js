@@ -13,6 +13,22 @@ define(function () {
         elmId = 0,
         elementsById = {};
 
+    var $userAgent = (function () {
+        var m;
+
+        if ((m = /theme=(\w+)/.exec(window.location.search))) {
+            return m[1];
+        }
+
+        if (navigator.userAgent.match(/iPad|iPhone/i) != null) {
+            return "ios";
+        }
+
+        if (navigator.userAgent.match(/Android/i) != null) {
+            return "android";
+        }
+    }());
+
     var getXmlHttpRequest = function () {
         if (typeof XMLHttpRequest !== 'undefined') {
             return new XMLHttpRequest();
@@ -516,6 +532,22 @@ define(function () {
 
             /**
              * Retrieves the absolute x and y components of the provided element,
+             * relative to its closest parent with position absolute and the
+             * elements position.
+             *
+             * @method getRect
+             * @param {HTMLElement} el The element to calculate the position of.
+             * @return {Object} x, y, width and height
+             */
+            getRect : function (el) {
+                var ret = Utils.Dom.getPosition(el);
+                ret.width = el.offsetWidth;
+                ret.height = el.offsetHeight;
+                return ret;
+            },
+
+            /**
+             * Retrieves the absolute x and y components of the provided element,
              * relative to its closest parent with position absolute.
              *
              * @method getAbsolutePosition
@@ -552,6 +584,10 @@ define(function () {
                     width: parseFloat(style.getPropertyValue("width")),
                     height: parseFloat(style.getPropertyValue("height"))
                 }
+            },
+
+            userAgent : function () {
+                return $userAgent;
             }
         }
     };
