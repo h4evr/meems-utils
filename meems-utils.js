@@ -27,6 +27,8 @@ define(function () {
         } else if (navigator.userAgent.match(/BlackBerry/i) != null) {
             return "blackberry";
         }
+
+        return "android";
     }());
 
     var getXmlHttpRequest = function () {
