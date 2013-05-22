@@ -20,7 +20,7 @@ define(function () {
             return m[1];
         }
 
-        if (navigator.userAgent.match(/iPad|iPhone/i) != null) {
+        if (navigator.userAgent.match(/iPad|iPhone|Safari/i) != null) {
             return "ios";
         }
 
