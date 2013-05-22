@@ -20,12 +20,12 @@ define(function () {
             return m[1];
         }
 
-        if (navigator.userAgent.match(/iPad|iPhone|Safari/i) != null) {
+        if (navigator.userAgent.match(/iPad|iPhone|iPod/i) != null) {
             return "ios";
-        }
-
-        if (navigator.userAgent.match(/Android/i) != null) {
+        } else if (navigator.userAgent.match(/Android/i) != null) {
             return "android";
+        } else if (navigator.userAgent.match(/BlackBerry/i) != null) {
+            return "blackberry";
         }
     }());
 
